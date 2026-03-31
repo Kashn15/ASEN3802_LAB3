@@ -13,6 +13,6 @@ n = 12;
 
 theta = linspace(0,pi,n/2+1); %
 
-x = (c.*cos(theta)+ c )./2
+x = (c.*cos(theta)+ c )./2;
 
-X = [x,flip(x(1:end-1))]
+X = [x,flip(x(1:end-1))];
