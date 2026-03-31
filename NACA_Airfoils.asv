@@ -1,0 +1,15 @@
+clc;
+clear;
+close all;
+
+m = 0;
+p = 0;
+t = 0;
+c=10;
+n = 12;
+
+theta = linspace(0,pi,n);
+
+x = (c.*cos(theta)+ c )./2
+
+for i =1:
