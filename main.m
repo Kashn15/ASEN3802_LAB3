@@ -10,16 +10,40 @@ clc;
 clear;
 close all;
 
-% Task 1
+%% Task 1
 
-m_21 = 0;
-p_21 = 0;
-t_21 = 21;
-c_21 = 5;
-N_21 = 25;
+% NACA 0012
+m_0021 = 0;
+p_0021 = 0;
+t_0021 = 21;
+c_0021 = 5;
+N_0021 = 25;
 
-[x_21, y_21] = NACA_Airfoils(m_21,p_21,t_21,c_21,N_21);
+[x_0021, y_0021] = NACA_Airfoils(m_0021,p_0021,t_0021,c_0021,N_0021);
 
 figure(1);
-plot(x_21, y_21);
+hold on;
+scatter(x_0021, y_0021, 'r', 'filled');
+plot(x_0021, y_0021, 'k-')
 axis equal;
+grid on;
+xlabel('ChordWise Displacement (x-axis displacement) [m]');
+ylabel('N-S displacement (y-axis displacement) [m]');
+
+% NACA 2421
+m_2421 = 2;
+p_2421 = 4;
+t_2421 = 21;
+c_2421 = 5;
+N_2421 = 25;
+
+[x_2421, y_2421] = NACA_Airfoils(m_2421,p_2421,t_2421,c_2421,N_2421);
+
+figure(2);
+hold on;
+scatter(x_2421, y_2421, 'r', 'filled');
+plot(x_2421, y_2421, 'k-')
+axis equal;
+grid on;
+xlabel('ChordWise Displacement (x-axis displacement) [m]');
+ylabel('N-S displacement (y-axis displacement) [m]');
