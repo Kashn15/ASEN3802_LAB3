@@ -30,8 +30,8 @@ x = [X,flip(X(1:end-1))]; % x-locations
 
 % Thickness
 ratio = x / c;
-y_t = ( t / 0.2 ) * (0.2969 * sqrt(ratio) - 0.1260 * (ratio) - 0.1260 ...
-       * (ratio.^2) * 0.2843 .* (ratio.^3) - 0.1036 .*(ratio.^4));
+y_t = (t / 0.2) * (0.2969 * sqrt(ratio) - 0.1260 * ratio - 0.3516 * ratio.^2 ...
+       + 0.2843 * ratio.^3 - 0.1036 * ratio.^4);
 
 % Chamber Distribution
 
