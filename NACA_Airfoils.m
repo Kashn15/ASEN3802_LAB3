@@ -1,49 +1,62 @@
-%% ASEN 3111 - Computational Assignment XX - Main
-% Provide a brief summary of the problem statement and code so that
-% you or someone else can later understand what you attempted to do
-% it doesn't have to be that long.
+function [x_b, y_b] = NACA_Airfoils(m1,p1,t1,c,N)
+% NACA_Airfoil Summary of this function goes here
+% Detailed explanation goes here
 %
-% Co-Authors: Philip Austin, Charles Bailey, Nico Galindo, Natsumi Kakuda
+% Author: {primary author, should be you}
+% Collaborators: J. Doe, J. Smith {acknowledge whomever you worked with}
 % Date: {should include the date last revised}
+%
+% m = 
+% p = 
+% t = thickness
+% c = chord 
+% N = number of employed panels
 
-clc; 
-clear;
-close all;
+% LE = 0; % Leading Edge
+% TE = c; % Trailing Edge
+% x = linspace(LE, TE, N);
 
-%% Task 1
+m = m1/100;
+p = p1/10;
+t = t1/100;
 
-% NACA 0012
-m_0021 = 0;
-p_0021 = 0;
-t_0021 = 21;
-c_0021 = 5;
-N_0021 = 25;
+% Determining x discretization
 
-[x_0021, y_0021] = NACA_Airfoils(m_0021,p_0021,t_0021,c_0021,N_0021);
+theta = linspace(0,pi,N/2+1); 
 
-figure(1);
-hold on;
-scatter(x_0021, y_0021, 'r', 'filled');
-plot(x_0021, y_0021, 'k-')
-axis equal;
-grid on;
-xlabel('ChordWise Displacement (x-axis displacement) [m]');
-ylabel('N-S displacement (y-axis displacement) [m]');
+X = (c.*cos(theta)+ c )./2;
 
-% NACA 2421
-m_2421 = 2;
-p_2421 = 4;
-t_2421 = 21;
-c_2421 = 5;
-N_2421 = 25;
+x = [X,flip(X(1:end-1))]; % x-locations
 
-[x_2421, y_2421] = NACA_Airfoils(m_2421,p_2421,t_2421,c_2421,N_2421);
+% Thickness
+ratio = x / c;
+y_t = ( t / 0.2 ) * (0.2969 * sqrt(ratio) - 0.1260 * (ratio) - 0.1260 ...
+       * (ratio.^2) * 0.2843 .* (ratio.^3) - 0.1036 .*(ratio.^4));
 
-figure(2);
-hold on;
-scatter(x_2421, y_2421, 'r', 'filled');
-plot(x_2421, y_2421, 'k-')
-axis equal;
-grid on;
-xlabel('ChordWise Displacement (x-axis displacement) [m]');
-ylabel('N-S displacement (y-axis displacement) [m]');
+% Chamber Distribution
+
+pc = p * c;
+
+    if any(x >= 0 & x < pc)
+        y_c = (m * (x/p^2)) .* ((2*p) - ratio);
+        dy_c_dx = (2*m*pc) - (2*m*x);
+    elseif any(x >= pc & x <= c)
+        y_c = m * ((c-x)/((1-p)^2)) .* (1 + ratio - 2*p);
+        dy_c_dx = ((-2*m*x)+(2*pc*m)) / (c*(p-1)^2);
+    end
+
+% Slope Calculations
+% dy_c_dx = gradient(y_c, x); % Calculate the slope of the camber line
+
+zeta = atan(dy_c_dx);
+
+x_U = x - y_t .* sin(zeta);
+x_L = x + y_t .* sin(zeta);
+
+y_U = y_c + y_t .* cos(zeta);
+y_L = y_c - y_t .* cos(zeta);
+
+x_b = [x_L, x_U];
+y_b = [y_L, y_U];
+
+end
