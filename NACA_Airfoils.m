@@ -22,41 +22,44 @@ t = t1/100;
 
 % Determining x discretization
 
-theta = linspace(0,pi,N/2+1); 
+theta = linspace(0, pi, N+1);
 
 X = (c.*cos(theta)+ c )./2;
 
-x = [X,flip(X(1:end-1))]; % x-locations
+%x = [X,flip(X(1:end-1))]; % x-locations
 
 % Thickness
+x = X; % TE to LE, one pass only
 ratio = x / c;
+
+% Thickness
 y_t = (t / 0.2) * (0.2969 * sqrt(ratio) - 0.1260 * ratio - 0.3516 * ratio.^2 ...
        + 0.2843 * ratio.^3 - 0.1036 * ratio.^4);
 
-% Chamber Distribution
-
+% Camber distribution (element-wise)
 pc = p * c;
+y_c      = zeros(size(x));
+dy_c_dx  = zeros(size(x));
 
-    if any(x >= 0 & x < pc)
-        y_c = (m * (x/p^2)) .* ((2*p) - ratio);
-        dy_c_dx = (2*m*pc) - (2*m*x);
-    elseif any(x >= pc & x <= c)
-        y_c = m * ((c-x)/((1-p)^2)) .* (1 + ratio - 2*p);
-        dy_c_dx = ((-2*m*x)+(2*pc*m)) / (c*(p-1)^2);
+for i = 1:length(x)
+    if x(i) >= 0 && x(i) < pc
+        y_c(i)     = (m * x(i) / p^2) * (2*p - x(i)/c);
+        dy_c_dx(i) = (2*m/p^2) * (p - x(i)/c);
+    else
+        y_c(i)     = (m * (c - x(i)) / (1-p)^2) * (1 + x(i)/c - 2*p);
+        dy_c_dx(i) = (2*m/(1-p)^2) * (p - x(i)/c);
     end
+end
 
-% Slope Calculations
-% dy_c_dx = gradient(y_c, x); % Calculate the slope of the camber line
-
+% Upper and lower surfaces
 zeta = atan(dy_c_dx);
-
 x_U = x - y_t .* sin(zeta);
 x_L = x + y_t .* sin(zeta);
-
 y_U = y_c + y_t .* cos(zeta);
 y_L = y_c - y_t .* cos(zeta);
 
-x_b = [x_L, x_U];
-y_b = [y_L, y_U];
+% Output: lower TE->LE, then upper LE->TE (TE repeated once)
+x_b = [x_L, flip(x_U(1:end-1))];
+y_b = [y_L, flip(y_U(1:end-1))];
 
 end
