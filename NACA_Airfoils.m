@@ -1,4 +1,4 @@
-function [x_b, y_b] = NACA_Airfoils(m1,p1,t1,c,N)
+function [x_b, y_b, x_c,y_c] = NACA_Airfoils(m1,p1,t1,c,N)
 % NACA_Airfoil Summary of this function goes here
 % Detailed explanation goes here
 %
@@ -61,5 +61,9 @@ y_L = y_c - y_t .* cos(zeta);
 % Output: lower TE->LE, then upper LE->TE (TE repeated once)
 x_b = [x_L, flip(x_U(1:end-1))];
 y_b = [y_L, flip(y_U(1:end-1))];
+
+%flipping camber line coordinates so they plot nice
+x_c = flip(x);
+y_c = flip(y_c);
 
 end
