@@ -9,7 +9,7 @@ clc;
 clear;
 close all;
 
-toggle = 'NACA 0021'; % Select between NACA 0012 or NACA 2421 for Task 1
+toggle = 'NACA 0021'; % Select between NACA 0021 or NACA 2421 for Task 1
 Task1 = 0;
 Task2 = 0;
 Task3 = 1;
@@ -25,11 +25,11 @@ m = 0;
 p = 0;
 t = 21;
 
-[x_0012, y_0012, x2_0012, y2_0012] = NACA_Airfoils(m,p,t,c,N);
+[x_0021, y_0021, x2_0021, y2_0021] = NACA_Airfoils(m,p,t,c,N);
 
 figure(1);
 hold on;
-scatter(x_0012, y_0012, 'ro');
+scatter(x_0021, y_0021, 'ro');
 plot(x_0012, y_0012, 'k-')
 axis equal;
 grid on;
