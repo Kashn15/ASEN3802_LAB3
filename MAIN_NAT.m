@@ -1,31 +1,36 @@
-%% ASEN 3111 - Computational Assignment XX - Main
-% Provide a brief summary of the problem statement and code so that
-% you or someone else can later understand what you attempted to do
-% it doesn't have to be that long.
-%
+%% ASEN 3802 - Aerodynamics Lab 03 Part 1 - Main
+% Main script for Part 1 of the aerodynamic analysis. The code generates
+% NACA 4-digit airfoil geometries and evaluates sectional lift using the
+% provided Vortex_Panel solver. Task 1 constructs and plots NACA airfoils.
+% Task 2 performs a convergence study for NACA 0012 to determine the number
+% of panels required for 1% relative error. Task 3 investigates the effect
+% of airfoil thickness on lift over a range of angles of attack. Task 4
+% analyzes the effect of airfoil camber on lift. Results are plotted and
+% compared within a single continuous workflow.
+% 
+% 
 % Co-Authors: Philip Austin, Charles Bailey, Nico Galindo, Natsumi Kakuda
-% Date: {should include the date last revised}
+% Date: 4/8/2026
 
 clc; 
 clear;
 close all;
 
-% Toggling Panel
-
-toggle = 'NACA 0012'; % Select between NACA 0012 or NACA 2421 for Task 1
-Task1 = 0;
-Task2 = 1;
+%% Toggling Panel
+toggle = 'NACA 0021'; % Select between NACA 0021 or NACA 2421 for Task 1
+Task1 = 0; % 1 to activate; 0 to deactivate
+Task2 = 1; % 1 to activate; 0 to deactivate
 
 %% TASK 1
 if Task1 == 1
 N = 50; % Number of Panels
 c = 1; % Chord [m]
 
-if toggle == 'NACA 0012'
-% NACA 0012
+if toggle == 'NACA 0021'
+% NACA 0021
 m = 0;
 p = 0;
-t = 12;
+t = 21;
 
 [x_0012, y_0012, x2_0012, y2_0012] = NACA_Airfoils(m,p,t,c,N);
 
@@ -39,7 +44,7 @@ xlabel('ChordWise Displacement (x-axis displacement) [m]');
 ylabel('N-S displacement (y-axis displacement) [m]');
 title('Airfoil generator: ', toggle);
 
-elseif toggle == 'NACA 2412'
+elseif toggle == 'NACA 2421'
 % NACA 2421
 m = 2;
 p = 4;
@@ -99,7 +104,7 @@ for i = 1 : length(N_values)
     error_vals(i) = abs((cl_i - cl_exact)/cl_exact) * 100; % Calculate the error between current and exact lift coefficient
 end
 
-% Error FInding
+% Error Finding
 idx_1percent = find(error_vals <= 1, 1, 'first'); % Finds minimum number of total panels need for the 1% requirement
 N_min = N_tot_values(idx_1percent);
 cl_min = cl_values(idx_1percent);
@@ -127,6 +132,11 @@ title('Convergence of c_l for NACA 0012 at \alpha = 12^\circ');
 hold off;
 
 end
+
+%% Task 3
+
+%% Task 4
+
 
 
 
