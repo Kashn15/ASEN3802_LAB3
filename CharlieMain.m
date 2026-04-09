@@ -11,8 +11,8 @@ clear;
 close all;
 
 toggle = 'NACA 0012'; % Select between NACA 0012 or NACA 2421 for Task 1
-Task1 = 0;
-Task2 = 0;
+Task1 = 1;
+Task2 = 1;
 Task3 = 1;
 
 %% TASK 1
@@ -146,13 +146,13 @@ c=1; %chord
 x_camber = linspace (0,c,1000);
 
 %Getting airfoil geometry
-N = 60; %number of decided runs
+N = 40; %number of decided runs from task 2
 %0006
-[x_0006, y_0006, x_c_0006, y_c_0006] = NACA_Airfoils(0,0,6,1,60);
+[x_0006, y_0006, x_c_0006, y_c_0006] = NACA_Airfoils(0,0,6,1,N);
 %0012
-[x_0012, y_0012, x_c_0012, y_c_0012] = NACA_Airfoils(0,0,12,1,60);
+[x_0012, y_0012, x_c_0012, y_c_0012] = NACA_Airfoils(0,0,12,1,N);
 %0018
-[x_0018, y_0018, x_c_0018, y_c_0018] = NACA_Airfoils(0,0,18,1,60);
+[x_0018, y_0018, x_c_0018, y_c_0018] = NACA_Airfoils(0,0,18,1,N);
 
 %Defining range of aoa's
 alphas = linspace(-3,15,100);
@@ -338,7 +338,6 @@ function zeroLiftAoa = aL_0(m, p, c, x_camber)
     dzdx = derivative(m, p, c, x_camber);
     a = dzdx .* (cos(theta0) - 1);
     zeroLiftAoa = -(1/pi) * trapz(theta0, a);
-    %fprintf('Alpha_L0 = %.4f \n', rad2deg(alphaL0));
     zeroLiftAoa = rad2deg(zeroLiftAoa);
 end
 
