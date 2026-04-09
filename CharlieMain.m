@@ -178,9 +178,9 @@ aL_0_NACA0012 = aL_0(0, 0, c, x_camber);
 aL_0_NACA0018 = aL_0(0, 0, c, x_camber);
 
 
-cl_TAT_NACA0006 = 2*pi*(deg2rad(alphas) - deg2rad(aL_0_NACA0006);
-cl_TAT_NACA0012 = 2*pi*(deg2rad(alphas) - deg2rad(aL_0_NACA0012);
-cl_TAT_NACA0018 = 2*pi*(deg2rad(alphas) - deg2rad(aL_0_NACA0018);
+cl_TAT_NACA0006 = 2*pi*(deg2rad(alphas) - deg2rad(aL_0_NACA0006));
+cl_TAT_NACA0012 = 2*pi*(deg2rad(alphas) - deg2rad(aL_0_NACA0012));
+cl_TAT_NACA0018 = 2*pi*(deg2rad(alphas) - deg2rad(aL_0_NACA0018));
 
 % Expermental CL vs Alpha
 
