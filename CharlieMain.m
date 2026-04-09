@@ -10,9 +10,9 @@ clc;
 clear;
 close all;
 
-toggle = 'NACA 0012'; % Select between NACA 0012 or NACA 2421 for Task 1
-Task1 = 1;
-Task2 = 1;
+toggle = 'NACA 0021'; % Select between NACA 0012 or NACA 2421 for Task 1
+Task1 = 0;
+Task2 = 0;
 Task3 = 1;
 
 %% TASK 1
@@ -20,11 +20,11 @@ if Task1 == 1
 N = 50; % Number of Panels
 c = 1; % Chord [m]
 
-if toggle == 'NACA 0012'
-% NACA 0012
+if toggle == 'NACA 0021'
+% NACA 0021
 m = 0;
 p = 0;
-t = 12;
+t = 21;
 
 [x_0012, y_0012, x2_0012, y2_0012] = NACA_Airfoils(m,p,t,c,N);
 
@@ -38,7 +38,7 @@ xlabel('ChordWise Displacement (x-axis displacement) [m]');
 ylabel('N-S displacement (y-axis displacement) [m]');
 title('Airfoil generator: ', toggle);
 
-elseif toggle == 'NACA 2412'
+elseif toggle == 'NACA 2421'
 % NACA 2421
 m = 2;
 p = 4;
@@ -98,7 +98,7 @@ for i = 1 : length(N_values)
     error_vals(i) = abs((cl_i - cl_exact)/cl_exact) * 100; % Calculate the error between current and exact lift coefficient
 end
 
-% Error FInding
+% Error Finding
 idx_1percent = find(error_vals <= 1, 1, 'first'); % Finds minimum number of total panels need for the 1% requirement
 N_min = N_tot_values(idx_1percent);
 cl_min = cl_values(idx_1percent);
@@ -173,9 +173,9 @@ aL_0_NACA0012 = aL_0(0, 0, c, x_camber);
 aL_0_NACA0018 = aL_0(0, 0, c, x_camber);
 
 
-cl_PLLT_NACA0006 = 2*pi*(deg2rad(alphas) - aL_0_NACA0006);
-cl_PLLT_NACA0012 = 2*pi*(deg2rad(alphas) - aL_0_NACA0012);
-cl_PLLT_NACA0018 = 2*pi*(deg2rad(alphas) - aL_0_NACA0018);
+cl_TAT_NACA0006 = 2*pi*(deg2rad(alphas) - deg2rad(aL_0_NACA0006);
+cl_TAT_NACA0012 = 2*pi*(deg2rad(alphas) - deg2rad(aL_0_NACA0012);
+cl_TAT_NACA0018 = 2*pi*(deg2rad(alphas) - deg2rad(aL_0_NACA0018);
 
 % Expermental CL vs Alpha
 
@@ -201,12 +201,12 @@ plot(alphas, clV_0012, 'm',  'LineWidth', 1, 'DisplayName', 'NACA 0012 - Vortex 
 plot(alphas, clV_0018, 'y',  'LineWidth', 1, 'DisplayName', 'NACA 0018 - Vortex Panel');
 
 % Thin Airfoil Theory (all identical for symmetric airfoils)
-plot(alphas, cl_PLLT_NACA0006, 'k--', 'LineWidth', 1, 'DisplayName', 'Thin Airfoil Theory (all symmetric)');
+plot(alphas, cl_TAT_NACA0006, 'k--', 'LineWidth', 1, 'DisplayName', 'Thin Airfoil Theory (all symmetric)');
 
 % Experimental
 scatter(alpha_0006, cl0006, 30, 'b', 'filled','HandleVisibility', 'off');
 scatter(alpha_0012, cl0012, 30, 'r', 'filled','HandleVisibility', 'off');
-plot(alpha_0006,cl0006,'b', 'DisplayName', 'NACA 0012 - Experimental');
+plot(alpha_0006,cl0006,'b', 'DisplayName', 'NACA 0006 - Experimental');
 plot(alpha_0012, cl0012,'r','DisplayName', 'NACA 0012 - Experimental');
 
 grid on;
@@ -264,18 +264,29 @@ end
 %% Functions
 
 function [x_b, y_b, x_c,y_c] = NACA_Airfoils(m1,p1,t1,c,N)
-% NACA_Airfoil Summary of this function goes here
-% Detailed explanation goes here
+% NACA_Airfoil Generates a NACA 4-digit airfoil using cosine spacing
 %
-% Author: {primary author, should be you}
-% Collaborators: J. Doe, J. Smith {acknowledge whomever you worked with}
-% Date: {should include the date last revised}
+% This fuction computes that boundary coordiantes for a NACA 4-digit airfoil
+% and returns the ordered panel points required for the vortex panel method.
+% The airfoil geometry is constructed using the standard thickness distribution
+% and the mean camber line equations. To improve trailing edge and leading edge
+% we used cosine spacing to cluster points to improve accuracy.
 %
-% m = 
-% p = 
-% t = thickness
-% c = chord 
-% N = number of employed panels
+% Authors: Philip Austin, Charles Bailey, Nico Galindo, Natsumi Kakuda
+% Date: 4/8/2026
+%
+% INPUTS:
+%   m1  - maximum camber (first digit of NACA airfoil, percent)
+%   p1  - location of maximum camber (second digit, tenths of chord)
+%   t1  - maximum thickness (last two digits, percent of chord)
+%   c   - chord length
+%   N   - number of panels per surface
+% OUTPUTS:
+%   x_b - x-coordinates of airfoil boundary points (clockwise from TE)
+%   y_b - y-coordinates of airfoil boundary points (clockwise from TE)
+%   x_c - x-coordinates of camber line
+%   y_c - y-coordinates of camber line
+
 
 % LE = 0; % Leading Edge
 % TE = c; % Trailing Edge
