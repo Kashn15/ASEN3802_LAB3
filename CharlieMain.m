@@ -1,6 +1,12 @@
 %% ASEN 3802 - Aerodynamics Lab - Main
-% This code explores the vortex panel method and thin airfoil theory
-% methods of airfoil analysis on symetrical and cambered NACA airfoils.
+% Main script for Part 1 of the aerodynamic analysis. The code generates
+% NACA 4-digit airfoil geometries and evaluates sectional lift using the
+% provided Vortex_Panel solver. Task 1 constructs and plots NACA airfoils.
+% Task 2 performs a convergence study for NACA 0012 to determine the number
+% of panels required for 1% relative error. Task 3 investigates the effect
+% of airfoil thickness on lift over a range of angles of attack. Task 4
+% analyzes the effect of airfoil camber on lift. Results are plotted and
+% compared within a single continuous workflow.
 %
 % Co-Authors: Philip Austin, Charles Bailey, Nico Galindo, Natsumi Kakuda
 % Date: 4/8/26
