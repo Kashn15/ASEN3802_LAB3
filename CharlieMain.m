@@ -1,22 +1,15 @@
-%% ASEN 3802 - Aerodynamics Lab 03 Part 1 - Main
-% Main script for Part 1 of the aerodynamic analysis. The code generates
-% NACA 4-digit airfoil geometries and evaluates sectional lift using the
-% provided Vortex_Panel solver. Task 1 constructs and plots NACA airfoils.
-% Task 2 performs a convergence study for NACA 0012 to determine the number
-% of panels required for 1% relative error. Task 3 investigates the effect
-% of airfoil thickness on lift over a range of angles of attack. Task 4
-% analyzes the effect of airfoil camber on lift. Results are plotted and
-% compared within a single continuous workflow.
-% 
-% 
+%% ASEN 3802 - Aerodynamics Lab - Main
+% This code explores the vortex panel method and thin airfoil theory
+% methods of airfoil analysis on symetrical and cambered NACA airfoils.
+%
 % Co-Authors: Philip Austin, Charles Bailey, Nico Galindo, Natsumi Kakuda
-% Date: 4/8/2026
+% Date: 4/8/26
 
 clc; 
 clear;
 close all;
 
-toggle = 'NACA 0021'; % Select between NACA 0021 or NACA 2421 for Task 1
+toggle = 'NACA 0021'; % Select between NACA 0012 or NACA 2421 for Task 1
 Task1 = 0;
 Task2 = 0;
 Task3 = 1;
@@ -32,12 +25,12 @@ m = 0;
 p = 0;
 t = 21;
 
-[x_0021, y_0021, x2_0021, y2_0021] = NACA_Airfoils(m,p,t,c,N);
+[x_0012, y_0012, x2_0012, y2_0012] = NACA_Airfoils(m,p,t,c,N);
 
 figure(1);
 hold on;
-scatter(x_0021, y_0021, 'ro');
-plot(x_0021, y_0021, 'k-')
+scatter(x_0012, y_0012, 'ro');
+plot(x_0012, y_0012, 'k-')
 axis equal;
 grid on;
 xlabel('ChordWise Displacement (x-axis displacement) [m]');
