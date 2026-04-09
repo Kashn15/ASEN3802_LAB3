@@ -1,16 +1,27 @@
 function [x_b, y_b, x_c,y_c] = NACA_Airfoils(m1,p1,t1,c,N)
-% NACA_Airfoil Summary of this function goes here
-% Detailed explanation goes here
+% NACA_Airfoil Generates a NACA 4-digit airfoil using cosine spacing
 %
-% Author: {primary author, should be you}
-% Collaborators: J. Doe, J. Smith {acknowledge whomever you worked with}
-% Date: {should include the date last revised}
+% This fuction computes that boundary coordiantes for a NACA 4-digit airfoil
+% and returns the ordered panel points required for the vortex panel method.
+% The airfoil geometry is constructed using the standard thickness distribution
+% and the mean camber line equations. To improve trailing edge and leading edge
+% we used cosine spacing to cluster points to improve accuracy.
 %
-% m = 
-% p = 
-% t = thickness
-% c = chord 
-% N = number of employed panels
+% Authors: Philip Austin, Charles Bailey, Nico Galindo, Natsumi Kakuda
+% Date: 4/8/2026
+%
+% INPUTS:
+%   m1  - maximum camber (first digit of NACA airfoil, percent)
+%   p1  - location of maximum camber (second digit, tenths of chord)
+%   t1  - maximum thickness (last two digits, percent of chord)
+%   c   - chord length
+%   N   - number of panels per surface
+% OUTPUTS:
+%   x_b - x-coordinates of airfoil boundary points (clockwise from TE)
+%   y_b - y-coordinates of airfoil boundary points (clockwise from TE)
+%   x_c - x-coordinates of camber line
+%   y_c - y-coordinates of camber line
+
 
 % LE = 0; % Leading Edge
 % TE = c; % Trailing Edge
