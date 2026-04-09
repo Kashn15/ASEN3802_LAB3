@@ -31,7 +31,7 @@ xlabel('ChordWise Displacement (x-axis displacement) [m]');
 ylabel('N-S displacement (y-axis displacement) [m]');
 plot(x_c_0021, y_c_0021, 'b--', 'DisplayName', 'Camber Line');
 legend('Boundary Points', 'Airfoil', 'Camber Line');
-
+title('NACA 0021 Airfoil')
 % NACA 2421
 m_2421 = 2;
 p_2421 = 4;
@@ -52,6 +52,7 @@ xlabel('ChordWise Displacement (x-axis displacement) [m]');
 ylabel('N-S displacement (y-axis displacement) [m]');
 plot(x_c_2421, y_c_2421, 'b--', 'DisplayName', 'Camber Line');
 legend('Boundary Points', 'Airfoil', 'Camber Line');
+title('NACA 2421 Airfoil')
 
 %% Task 2
 
