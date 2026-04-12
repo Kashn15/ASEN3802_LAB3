@@ -16,10 +16,11 @@ clear;
 close all;
 
 toggle = 'NACA 0021'; % Select between NACA 0021 or NACA 2421 for Task 1
-Task1 = 1;
-Task2 = 1;
-Task3 = 1;
-Task4 = 1;
+Task1 =0;
+Task2 = 0;
+Task3 = 0;
+Task4 = 0;
+Part2 = 1;
 
 %% TASK 1
 if Task1 == 1
@@ -381,6 +382,39 @@ fprintf('%-12s %14.4f %14.4f %14.4f\n', 'NACA 2412', slope_V_2412, slope_TAT, sl
 fprintf('%-12s %14.4f %14.4f %14.4f\n', 'NACA 4412', slope_V_4412, slope_TAT, slope_exp_4412);
 
 end
+
+%% Part 2 Task 1
+if Part2 == 1
+
+taper_ratios = linspace(0, 1, 100); % 100 ok?
+AR_values = [4, 6, 8, 10];
+b_ref = 5; %can be anything
+N_terms = 20; %20 ok?
+
+figure();
+hold on;
+colors = {'r', 'g', 'b', 'y'};
+for k = 1:length(AR_values)
+    AR_val     = AR_values(k);
+    delta_vals = zeros(size(taper_ratios));
+    for j = 1:length(taper_ratios)
+        lambda  = taper_ratios(j);
+        c_r_val = 2 * b_ref / (AR_val * (1 + lambda));
+        c_t_val = lambda * c_r_val;
+        [e_val, ~, ~] = PLLT(b_ref, 2*pi, 2*pi, c_t_val, c_r_val, 0, 0, 5, 5, N_terms);
+        delta_vals(j) = 1/e_val - 1;
+    end
+    plot(taper_ratios, delta_vals, colors{k}, 'LineWidth', 1,'DisplayName', sprintf('AR = %d', AR_val));
+end
+
+grid on;
+xlabel('Taper Ratio, c_t/c_r');
+ylabel('Induced Drag Factor, \delta');
+title('Induced Drag Factor vs Taper Ratio');
+ylim([0 0.2]);
+hold off;
+
+end
 %% Functions
 
 function [x_b, y_b, x_c,y_c] = NACA_Airfoils(m1,p1,t1,c,N)
@@ -484,4 +518,214 @@ function dzdx = derivative(m, p, c, x_camber)
     %Behind max camber
     index2 = p*c < x_camber;
     dzdx(index2) = (2*m/(1-p)^2) * (p - x_camber(index2)/c);
+end
+
+function [CL] = Vortex_Panel(XB,YB,VINF,ALPHA)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Input:                           %
+%                                  %
+% XB  = Boundary Points x-location %
+% YB  = Boundary Points y-location %
+% VINF  = Free-stream Flow Speed   %
+% ALPHA = AOA                      %
+%                                  %
+% Output:                          %
+%                                  %
+% CL = Sectional Lift Coefficient  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%
+% Convert to Radians %
+%%%%%%%%%%%%%%%%%%%%%%
+
+ALPHA = ALPHA*pi/180;
+
+%%%%%%%%%%%%%%%%%%%%%
+% Compute the Chord %
+%%%%%%%%%%%%%%%%%%%%%
+
+CHORD = max(XB)-min(XB);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Determine the Number of Panels %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+M = max(size(XB,1),size(XB,2))-1;
+MP1 = M+1;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Intra-Panel Relationships:                                  %
+%                                                             %
+% Determine the Control Points, Panel Sizes, and Panel Angles %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+for I = 1:M
+    IP1 = I+1;
+    X(I) = 0.5*(XB(I)+XB(IP1));
+    Y(I) = 0.5*(YB(I)+YB(IP1));
+    S(I) = sqrt( (XB(IP1)-XB(I))^2 +( YB(IP1)-YB(I))^2 );
+    THETA(I) = atan2( YB(IP1)-YB(I), XB(IP1)-XB(I) );
+    SINE(I) = sin( THETA(I) );
+    COSINE(I) = cos( THETA(I) );
+    RHS(I) = sin( THETA(I)-ALPHA );
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Inter-Panel Relationships:             %
+%                                        %
+% Determine the Integrals between Panels %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+for I = 1:M
+    for J = 1:M
+        if I == J
+            CN1(I,J) = -1.0;
+            CN2(I,J) = 1.0;
+            CT1(I,J) = 0.5*pi;
+            CT2(I,J) = 0.5*pi;
+        else
+            A = -(X(I)-XB(J))*COSINE(J) - (Y(I)-YB(J))*SINE(J);
+            B = (X(I)-XB(J))^2 + (Y(I)-YB(J))^2;
+            C = sin( THETA(I)-THETA(J) );
+            D = cos( THETA(I)-THETA(J) );
+            E = (X(I)-XB(J))*SINE(J) - (Y(I)-YB(J))*COSINE(J);
+            F = log( 1.0 + S(J)*(S(J)+2*A)/B );
+            G = atan2( E*S(J), B+A*S(J) );
+            P = (X(I)-XB(J)) * sin( THETA(I) - 2*THETA(J) ) ...
+              + (Y(I)-YB(J)) * cos( THETA(I) - 2*THETA(J) );
+            Q = (X(I)-XB(J)) * cos( THETA(I) - 2*THETA(J) ) ...
+              - (Y(I)-YB(J)) * sin( THETA(I) - 2*THETA(J) );
+            CN2(I,J) = D + 0.5*Q*F/S(J) - (A*C+D*E)*G/S(J);
+            CN1(I,J) = 0.5*D*F + C*G - CN2(I,J);
+            CT2(I,J) = C + 0.5*P*F/S(J) + (A*D-C*E)*G/S(J);
+            CT1(I,J) = 0.5*C*F - D*G - CT2(I,J);
+        end
+    end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Inter-Panel Relationships:           %
+%                                      %
+% Determine the Influence Coefficients %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+for I = 1:M
+    AN(I,1) = CN1(I,1);
+    AN(I,MP1) = CN2(I,M);
+    AT(I,1) = CT1(I,1);
+    AT(I,MP1) = CT2(I,M);
+    for J = 2:M
+        AN(I,J) = CN1(I,J) + CN2(I,J-1);
+        AT(I,J) = CT1(I,J) + CT2(I,J-1);
+    end
+end
+AN(MP1,1) = 1.0;
+AN(MP1,MP1) = 1.0;
+for J = 2:M
+    AN(MP1,J) = 0.0;
+end
+RHS(MP1) = 0.0;
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+% Solve for the gammas %
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+GAMA = AN\RHS';
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Solve for Tangential Veloity and Coefficient of Pressure %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+for I = 1:M
+    V(I) = cos( THETA(I)-ALPHA );
+    for J = 1:MP1
+        V(I) = V(I) + AT(I,J)*GAMA(J);
+    end
+    CP(I) = 1.0 - V(I)^2;
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Solve for Sectional Coefficient of Lift %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+CIRCULATION = sum(S.*V);
+CL = 2*CIRCULATION/CHORD;
+end
+
+function [e, c_L, c_Di] = PLLT(b, a0_t, a0_r, c_t, c_r, aero_t, aero_r, geo_t, geo_r, N)
+% PLLT - Prandtl Lifting Line Theory for finite wings
+%
+% Authors: Philip Austin, Charles Bailey, Nico Galindo, Natsumi Kakuda
+% Date: 4/15/2026
+%
+% INPUTS:
+%   b - wingspan (feet)
+%   a0_t - sectional lift slope at tip (per radian)
+%   a0_r - sectional lift slope at root (per radian)
+%   c_t - chord at tip (feet)
+%   c_r - chord at root (feet)
+%   aero_t - zero-lift AoA at tip (degrees)
+%   aero_r - zero-lift AoA at root (degrees)
+%   geo_t - geometric AoA at tip (degrees)
+%   geo_r - geometric AoA at root (degrees)
+%   N - number of odd terms in the Fourier series
+%
+% OUTPUTS:
+%   e- span efficiency factor
+%   c_L - wing lift coefficient
+%   c_Di - induced drag coefficient
+
+% theta locations from equation 
+theta = (1:N)' * pi / (2*N); % column vector wth N points
+
+% Spanwise coordinates y = (b/2)*cos(theta)
+%theta_i = i*pi/(2N) so theta goes from pi/(2N) to pi/2
+% meaning we cover from near tip to root on one half the span position
+eta = cos(theta); % 0 at root (theta=pi/2), 1 at tip (theta=0)
+
+% Linear variation from root (eta=0) to tip (eta=1)
+c_local    = c_r + (c_t - c_r) .* eta;
+a0_local   = a0_r + (a0_t - a0_r) .* eta;
+aero_local = aero_r + (aero_t - aero_r) .* eta; % degrees not rad
+geo_local  = geo_r  + (geo_t  - geo_r)  .* eta; % degrees not rad
+
+% Effective geometric angle of attack in radians
+alpha_eff = deg2rad(geo_local - aero_local);
+
+% Odd Fourier terms: n = 1, 3, 5, ...
+n = (2*(1:N) - 1); % row vector
+
+% From equation 1 in lab sheet
+% alpha(theta) = sum_n [ An * sin(n*theta) * (4b/(a0*c) + n/sin(theta))]
+LHS = zeros(N, N);
+for i = 1:N
+    for j = 1:N
+        nj = n(j);
+        LHS(i,j) = sin(nj * theta(i)) * (4*b / (a0_local(i) * c_local(i)) + nj / sin(theta(i)));
+    end
+end
+
+%Solving for Fourier coefficients
+A = LHS \ alpha_eff;% column vector of all the odd coefficents.
+
+%Wing reference area from vehicle design
+S = 0.5 * (c_r + c_t) * b;
+
+% Aspect ratio
+AR = b^2 / S;
+
+% Wing lift coefficient: only A1 (the n=1 term) contributes
+c_L = A(1) * pi * AR;
+
+% Induced drag factor delta: sum over all terms
+% delta = sum_{k=1}^{N} n_k * (A_k/A_1)^2  but without the last term
+delta = sum(n(2:end) .* (A(2:end)' ./ A(1)).^2);
+
+% Span efficiency factor
+e = 1 / (1 + delta);
+
+% Induced drag coefficient
+c_Di = c_L^2 / (pi * AR * e);
+
 end
