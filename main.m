@@ -1,12 +1,13 @@
 %% ASEN 3802 - Aerodynamics Lab - Main
-% Main script for Part 1 of the aerodynamic analysis. The code generates
+% Main script for Parts 1 and 2 of the aerodynamic analysis. The code generates
 % NACA 4-digit airfoil geometries and evaluates sectional lift using the
 % provided Vortex_Panel solver. Task 1 constructs and plots NACA airfoils.
 % Task 2 performs a convergence study for NACA 0012 to determine the number
 % of panels required for 1% relative error. Task 3 investigates the effect
 % of airfoil thickness on lift over a range of angles of attack. Task 4
 % analyzes the effect of airfoil camber on lift. Results are plotted and
-% compared within a single continuous workflow.
+% compared within a single continuous workflow. Part 2 implements the code
+% for PLLT.
 %
 % Co-Authors: Philip Austin, Charles Bailey, Nico Galindo, Natsumi Kakuda
 % Date: 4/8/26
@@ -408,8 +409,8 @@ for k = 1:length(AR_values)
 end
 
 grid on;
-xlabel('Taper Ratio, c_t/c_r');
-ylabel('Induced Drag Factor, \delta');
+xlabel('Taper Ratio c_t/c_r');
+ylabel('Induced Drag Factor \delta');
 title('Induced Drag Factor vs Taper Ratio');
 ylim([0 0.2]);
 hold off;
