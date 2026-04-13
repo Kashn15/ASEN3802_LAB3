@@ -694,10 +694,10 @@ geo_local  = geo_r  + (geo_t  - geo_r)  .* eta; % degrees not rad
 alpha_eff = deg2rad(geo_local - aero_local);
 
 % Odd Fourier terms: n = 1, 3, 5, ...
-n = (2*(1:N) - 1); % row vector
+n = (2*(1:N) - 1); % row vector (convert back later?)
 
-% From equation 1 in lab sheet
-% alpha(theta) = sum_n [ An * sin(n*theta) * (4b/(a0*c) + n/sin(theta))]
+%From equation 1 in lab sheet
+%alpha(theta) = sum_n [ An * sin(n*theta) * (4b/(a0*c) + n/sin(theta))]
 LHS = zeros(N, N);
 for i = 1:N
     for j = 1:N
@@ -706,26 +706,26 @@ for i = 1:N
     end
 end
 
-%Solving for Fourier coefficients
+%Solving for fourier coefficients
 A = LHS \ alpha_eff;% column vector of all the odd coefficents.
 
 %Wing reference area from vehicle design
 S = 0.5 * (c_r + c_t) * b;
 
-% Aspect ratio
+%Aspect ratio
 AR = b^2 / S;
 
-% Wing lift coefficient: only A1 (the n=1 term) contributes
+%Wing lift coefficient only A1 (the n=1 term) contributes
 c_L = A(1) * pi * AR;
 
 % Induced drag factor delta: sum over all terms
 % delta = sum_{k=1}^{N} n_k * (A_k/A_1)^2  but without the last term
 delta = sum(n(2:end) .* (A(2:end)' ./ A(1)).^2);
 
-% Span efficiency factor
+%Span efficiency factor
 e = 1 / (1 + delta);
 
-% Induced drag coefficient
+%Induced drag coefficient
 c_Di = c_L^2 / (pi * AR * e);
 
 end
