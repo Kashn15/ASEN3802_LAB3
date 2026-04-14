@@ -28,7 +28,7 @@ if Part == 1
 elseif Part == 2
     Task1 = 1;
 end
-
+if Part == 1
 %% TASK 1
 if Task1 == 1
 N = 50; % Number of Panels
@@ -389,9 +389,10 @@ fprintf('%-12s %14.4f %14.4f %14.4f\n', 'NACA 2412', slope_V_2412, slope_TAT, sl
 fprintf('%-12s %14.4f %14.4f %14.4f\n', 'NACA 4412', slope_V_4412, slope_TAT, slope_exp_4412);
 
 end
-
+end
 %% Part 2 Task 1
-if Part2 == 1
+if Part == 2
+if Task1 == 1
 
 taper_ratios = linspace(0, 1, 100); % 100 ok?
 AR_values = [4, 6, 8, 10];
@@ -421,6 +422,7 @@ title('Induced Drag Factor vs Taper Ratio');
 ylim([0 0.2]);
 hold off;
 
+end
 end
 %% Functions
 
