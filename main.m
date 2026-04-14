@@ -401,7 +401,8 @@ N_terms = 20; %20 ok?
 
 figure();
 hold on;
-colors = {'r', 'g', 'b', 'y'};
+colors = {'r', 'k', 'b', 'm'};
+
 for k = 1:length(AR_values)
     AR_val     = AR_values(k);
     delta_vals = zeros(size(taper_ratios));
@@ -416,6 +417,7 @@ for k = 1:length(AR_values)
 end
 
 grid on;
+legend;
 xlabel('Taper Ratio c_t/c_r');
 ylabel('Induced Drag Factor \delta');
 title('Induced Drag Factor vs Taper Ratio');
