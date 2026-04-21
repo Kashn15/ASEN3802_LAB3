@@ -426,6 +426,80 @@ hold off;
 
 end
 end
+%% Part 3
+if Part == 3
+    % Geometry
+
+    % Free Stream Velocity
+    V_inf = 15; % [m/s]
+
+    % Wing Span
+    b_ft = 33 + (4/12); % [ft]
+    b_in = b_ft * 12; % [in]
+    b = b_in / 39.37; % [m]
+
+    % Chord
+    c = b/2;
+
+    % Taper Geometry
+    c_r_ft = 5 + (4/12); % [ft]
+    c_r_in = c_r_ft * 12; % [in]
+    c_r = c_r_in / 39.37; % [m]
+    c_t_ft = 3 + 8.5/12; % [ft]
+    c_t_in = c_t_ft * 12; % [in]
+    c_t = c_t_in / 39.37; % [m]
+
+    % Angle of Attack
+    alpha_Pt1 = 2; % degrees
+    alpha_Pt2 = 6; % degrees
+
+    % Geometric Angles of Attack
+    geo_t = 0; % degrees
+    geo_r = 1; % degrees
+
+    % NACA 2412
+    m1 = 2;
+    p1 = 4;
+    t1 = 12;
+
+    % NACA 0012
+    m2 = 0;
+    p2 = 0;
+    t2 = 12;
+
+    % Number of Panels
+    N = 20;
+
+    % NACA 2412
+    [x_2412, y_2412, xc_2412, yc_2412] = NACA_Airfoils(m1,p1,t1,c,N);
+
+    [CL_NACA2412_Pt1] = Vortex_Panel(x_2412, y_2412, V_inf, alpha_Pt1);
+    [CL_NACA2412_Pt2] = Vortex_Panel(x_2412, y_2412, V_inf, alpha_Pt2);
+
+    CL_NACA2412 = (CL_NACA2412_Pt2 - CL_NACA2412_Pt1) / (alpha_Pt2 - alpha_Pt1);
+
+    disp(CL_NACA2412);
+
+    % NACA 0012
+    [x_0012, y_0012, xc_0012, yc_0012] = NACA_Airfoils(m2,p2,t2,c,N); % NACA 0012
+    
+    [CL_NACA0012_Pt1] = Vortex_Panel(x_0012, y_0012, V_inf, alpha_Pt1);
+    [CL_NACA0012_Pt2] = Vortex_Panel(x_0012, y_0012, V_inf, alpha_Pt2);
+
+    CL_NACA0012 = (CL_NACA0012_Pt2 - CL_NACA0012_Pt1) / (alpha_Pt2 - alpha_Pt1);
+    
+    disp(CL_NACA0012);
+
+    if Task1 == 1
+        %% Task 1
+        
+
+    end
+
+
+
+end
+
 %% Functions
 
 function [x_b, y_b, x_c,y_c] = NACA_Airfoils(m1,p1,t1,c,N)
